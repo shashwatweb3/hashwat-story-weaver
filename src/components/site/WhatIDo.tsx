@@ -17,12 +17,13 @@ export function WhatIDo() {
   return (
     <section
       ref={ref}
+      id="what-i-do"
       className="relative h-[420vh]"
       aria-label="Section 02 — What I do"
     >
       <div
         className={`sticky top-0 flex h-screen flex-col overflow-hidden transition-colors duration-700 ${
-          dark ? "bg-void text-void-foreground" : "bg-background text-foreground"
+          dark ? "bg-secondary text-foreground" : "bg-background text-foreground"
         }`}
       >
         <div className="flex items-center gap-4 px-5 pt-24 md:px-10">
@@ -47,7 +48,7 @@ export function WhatIDo() {
               transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
               aria-hidden={i !== active}
             >
-              <h2 className="type-display text-[22vw] leading-[0.78]">{d.word}</h2>
+              <h2 className="type-display text-[18vw] leading-[0.9] md:text-[12vw]">{d.word}</h2>
               <p className="mt-8 max-w-lg text-lg leading-relaxed opacity-70 md:ml-auto md:text-xl">
                 {d.body}
               </p>

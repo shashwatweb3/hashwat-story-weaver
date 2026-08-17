@@ -18,18 +18,18 @@ export function Community() {
   return (
     <section
       ref={ref}
-      className="relative h-[300vh] bg-void text-void-foreground"
+      className="relative h-[300vh]"
       aria-label="Section 05 — Community"
     >
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
-        <div className="px-5 md:px-10">
-          <span className="type-label opacity-50">05 / Community</span>
+        <div className="mx-auto w-full max-w-5xl px-4 md:px-6">
+          <span className="type-label text-muted-foreground">05 / Community</span>
           <motion.h2
             initial={{ y: 40, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="type-display mt-8 max-w-5xl text-[8vw] leading-[0.86]"
+            className="type-display mt-4 max-w-3xl text-4xl leading-[1.02] md:text-6xl"
           >
             I didn&apos;t just want to participate.
             <span className="block text-accent">I wanted to build.</span>
@@ -39,11 +39,11 @@ export function Community() {
           </p>
         </div>
 
-        <motion.ul style={{ x }} className="mt-16 flex gap-6 px-5 md:px-10">
+        <motion.ul style={{ x }} className="mt-12 flex gap-5 px-4 md:px-6">
           {GALLERY.map((g) => (
             <li
               key={g.id}
-              className="relative aspect-[4/3] w-[70vw] shrink-0 border border-white/15 md:w-[32vw]"
+              className="panel relative aspect-[4/3] w-[70vw] shrink-0 overflow-hidden md:w-[30vw]"
             >
               <div className="absolute inset-0 rule-grid opacity-10" />
               <div className="absolute inset-0 flex flex-col items-start justify-end gap-1 p-5">

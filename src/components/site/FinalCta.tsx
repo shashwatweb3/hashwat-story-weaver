@@ -11,14 +11,14 @@ export function FinalCta() {
   const scale = useTransform(scrollYProgress, [0, 0.45], [0.92, 1]);
 
   return (
-    <section id="contact" ref={ref} className="relative bg-background" aria-label="Contact">
+    <section id="contact" ref={ref} className="relative px-4 py-16 md:px-6" aria-label="Contact">
       <motion.div
         style={{ clipPath: clip, scale }}
-        className="flex min-h-screen flex-col justify-between bg-void px-5 py-24 text-void-foreground md:px-10"
+        className="mx-auto flex min-h-[80vh] max-w-6xl flex-col justify-between rounded-[2.5rem] border-2 border-foreground bg-void px-6 py-16 text-void-foreground md:px-12"
       >
         <span className="type-label opacity-50">10 / Next</span>
 
-        <h2 className="type-display max-w-6xl text-[11vw] leading-[0.84]">
+        <h2 className="type-display my-12 max-w-4xl text-5xl leading-[1.02] md:text-7xl">
           What are we
           <span className="block text-accent">building next?</span>
         </h2>

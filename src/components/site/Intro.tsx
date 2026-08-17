@@ -20,7 +20,7 @@ export function Intro() {
 
         <motion.h2
           style={{ x: headlineX, opacity: headlineOpacity }}
-          className="type-display whitespace-nowrap text-[16vw]"
+          className="type-display whitespace-nowrap text-[14vw]"
         >
           I build things.
         </motion.h2>
