@@ -135,8 +135,10 @@
   box-shadow: 4px 4px 0 var(--ink);
 }
 
-@utility caret::after {
-  content: "_";
+@utility caret {
+  &::after {
+    content: "_";
+  }
 }
 
 @utility type-label {
