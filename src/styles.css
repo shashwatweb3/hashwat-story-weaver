@@ -37,35 +37,35 @@
   --color-paper: var(--paper);
   --color-void: var(--void);
   --color-void-foreground: var(--void-foreground);
-  --font-display: "Archivo", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Instrument Serif", ui-serif, Georgia, serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
 :root {
-  --radius: 0.25rem;
-  --paper: oklch(0.977 0.006 92);
-  --ink: oklch(0.16 0.008 60);
-  --void: oklch(0.145 0.006 60);
+  --radius: 1.25rem;
+  --paper: oklch(0.966 0.031 92);
+  --ink: oklch(0.16 0.004 60);
+  --void: oklch(0.14 0.004 60);
   --void-foreground: oklch(0.965 0.006 92);
   --background: var(--paper);
   --foreground: var(--ink);
-  --card: oklch(0.99 0.004 92);
+  --card: oklch(0.995 0.006 92);
   --card-foreground: var(--ink);
   --popover: oklch(0.99 0.004 92);
   --popover-foreground: var(--ink);
   --primary: var(--ink);
   --primary-foreground: var(--paper);
-  --secondary: oklch(0.945 0.008 92);
+  --secondary: oklch(0.935 0.026 92);
   --secondary-foreground: var(--ink);
-  --muted: oklch(0.945 0.008 92);
+  --muted: oklch(0.935 0.026 92);
   --muted-foreground: oklch(0.55 0.012 70);
-  --accent: oklch(0.615 0.192 33);
+  --accent: oklch(0.585 0.208 30);
   --accent-foreground: oklch(0.985 0.004 92);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0.004 92);
-  --border: oklch(0.885 0.008 85);
-  --input: oklch(0.885 0.008 85);
+  --border: oklch(0.855 0.022 85);
+  --input: oklch(0.855 0.022 85);
   --ring: oklch(0.615 0.192 33);
 }
 
@@ -115,10 +115,28 @@
 /* Oversized editorial display type */
 @utility type-display {
   font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: -0.045em;
-  line-height: 0.82;
-  text-transform: uppercase;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 0.92;
+}
+
+/* Bordered paper panel with a hard offset shadow — the reference's card idiom */
+@utility panel {
+  border: 2px solid var(--ink);
+  border-radius: 1.5rem;
+  background: oklch(1 0 0);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+@utility pill {
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: oklch(1 0 0);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+@utility caret::after {
+  content: "_";
 }
 
 @utility type-label {
