@@ -4,7 +4,7 @@ import { POSTS } from "@/lib/site-data";
 
 export function Internet() {
   return (
-    <section className="relative bg-background py-[16vh]" aria-label="Section 08 — Internet">
+    <section className="relative bg-background py-24" aria-label="Section 08 — Internet">
       <div className="px-5 md:px-10">
         <span className="type-label text-muted-foreground">08 / Internet</span>
         <motion.h2

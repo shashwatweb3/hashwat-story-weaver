@@ -10,7 +10,7 @@ export function About() {
   const y = useTransform(scrollYProgress, [0, 1], ["12%", "-12%"]);
 
   return (
-    <section id="about" ref={ref} className="relative bg-background py-[16vh]" aria-label="About">
+    <section id="about" ref={ref} className="relative bg-background py-24" aria-label="About">
       <div className="px-5 md:px-10">
         <span className="type-label text-muted-foreground">09 / About</span>
 

@@ -13,7 +13,7 @@ export function Ecosystem() {
   return (
     <section
       ref={ref}
-      className="relative overflow-hidden bg-background py-[18vh]"
+      className="relative overflow-hidden bg-background py-24"
       aria-label="Section 06 — Web3 ecosystem"
     >
       <div className="px-5 md:px-10">

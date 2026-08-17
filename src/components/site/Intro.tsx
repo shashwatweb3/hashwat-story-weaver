@@ -11,7 +11,7 @@ export function Intro() {
   const headlineOpacity = useTransform(scrollYProgress, [0.05, 0.25, 0.8, 1], [0, 1, 1, 0.2]);
 
   return (
-    <section ref={ref} className="relative py-[18vh]" aria-label="Section 01 — The introduction">
+    <section ref={ref} className="relative py-24" aria-label="Section 01 — The introduction">
       <div className="px-5 md:px-10">
         <div className="mb-16 flex items-center gap-4">
           <span className="type-label text-muted-foreground">01 / The introduction</span>
@@ -25,7 +25,7 @@ export function Intro() {
           I build things.
         </motion.h2>
 
-        <div className="mt-[12vh] grid gap-y-6 md:grid-cols-12">
+        <div className="mt-16 grid gap-y-6 md:grid-cols-12">
           <div className="md:col-span-5 md:col-start-7">
             {LINES.map((line, i) => (
               <motion.p

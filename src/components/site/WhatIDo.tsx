@@ -18,7 +18,7 @@ export function WhatIDo() {
     <section
       ref={ref}
       id="what-i-do"
-      className="relative h-[420vh]"
+      className="relative h-[240vh]"
       aria-label="Section 02 — What I do"
     >
       <div

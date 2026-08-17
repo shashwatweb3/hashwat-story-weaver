@@ -18,7 +18,7 @@ export function Community() {
   return (
     <section
       ref={ref}
-      className="relative h-[300vh]"
+      className="relative h-[180vh]"
       aria-label="Section 05 — Community"
     >
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
