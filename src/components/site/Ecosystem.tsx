@@ -22,7 +22,7 @@ export function Ecosystem() {
 
       <motion.h2
         style={{ scale, letterSpacing }}
-        className="type-display mt-10 text-center text-[26vw] leading-none"
+        className="type-display mt-10 text-center text-[16vw] leading-none md:text-[10vw]"
       >
         Web3
       </motion.h2>
