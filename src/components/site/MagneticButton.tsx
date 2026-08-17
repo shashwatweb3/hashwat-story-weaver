@@ -39,7 +39,7 @@ export function MagneticButton({
   };
 
   const classes = cn(
-    "inline-flex items-center gap-3 type-label border border-current px-6 py-4 transition-colors hover:bg-foreground hover:text-background",
+    "inline-flex items-center gap-3 whitespace-nowrap type-label border border-current px-6 py-4 transition-colors hover:bg-foreground hover:text-background",
     className,
   );
 

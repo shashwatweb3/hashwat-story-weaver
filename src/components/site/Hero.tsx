@@ -45,7 +45,7 @@ export function Hero() {
               style={{ scale, filter }}
             >
               <motion.span
-                className="block text-[19vw] leading-[0.8]"
+                className="block text-[15vw] leading-[0.8]"
                 style={{ x: firstX, translateX: tiltX }}
                 initial={{ y: "22%", opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -54,7 +54,7 @@ export function Hero() {
                 {PERSON.first}
               </motion.span>
               <motion.span
-                className="block text-right text-[19vw] leading-[0.8] text-accent"
+                className="block text-right text-[17vw] leading-[0.8] text-accent"
                 style={{ x: lastX, translateY: tiltY }}
                 initial={{ y: "22%", opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
