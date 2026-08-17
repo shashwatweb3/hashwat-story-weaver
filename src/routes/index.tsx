@@ -1,24 +1,57 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { SmoothScroll } from "@/components/site/SmoothScroll";
+import { CustomCursor } from "@/components/site/CustomCursor";
+import { Nav } from "@/components/site/Nav";
+import { Hero } from "@/components/site/Hero";
+import { Intro } from "@/components/site/Intro";
+import { WhatIDo } from "@/components/site/WhatIDo";
+import { Work } from "@/components/site/Work";
+import { ExperienceList } from "@/components/site/ExperienceList";
+import { Community } from "@/components/site/Community";
+import { Ecosystem } from "@/components/site/Ecosystem";
+import { Metrics } from "@/components/site/Metrics";
+import { Internet } from "@/components/site/Internet";
+import { About } from "@/components/site/About";
+import { FinalCta } from "@/components/site/FinalCta";
+import { Footer } from "@/components/site/Footer";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+const TITLE = "Shashwat Chauhan — Software Engineer & Web3 Builder";
+const DESCRIPTION =
+  "Portfolio of Shashwat Chauhan: software engineer, Web3 builder and community builder. Projects include Shepherd, TradeVault Arena, VaraSplit and Flekvar.";
+
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: TITLE },
+      { name: "description", content: DESCRIPTION },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESCRIPTION },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <SmoothScroll>
+      <CustomCursor />
+      <Nav />
+      <main>
+        <Hero />
+        <Intro />
+        <WhatIDo />
+        <Work />
+        <ExperienceList />
+        <Community />
+        <Ecosystem />
+        <Metrics />
+        <Internet />
+        <About />
+        <FinalCta />
+      </main>
+      <Footer />
+    </SmoothScroll>
   );
 }
