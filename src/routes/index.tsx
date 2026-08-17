@@ -12,6 +12,7 @@ import { Ecosystem } from "@/components/site/Ecosystem";
 import { Metrics } from "@/components/site/Metrics";
 import { Internet } from "@/components/site/Internet";
 import { About } from "@/components/site/About";
+import { Blog } from "@/components/site/Blog";
 import { FinalCta } from "@/components/site/FinalCta";
 import { Footer } from "@/components/site/Footer";
 
@@ -48,6 +49,7 @@ function Index() {
         <Ecosystem />
         <Metrics />
         <Internet />
+        <Blog />
         <About />
         <FinalCta />
       </main>

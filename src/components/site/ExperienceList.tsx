@@ -6,7 +6,7 @@ export function ExperienceList() {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section id="experience" className="relative bg-background py-[16vh]" aria-label="Experience">
+    <section id="experience" className="relative bg-background py-24" aria-label="Experience">
       <div className="px-5 md:px-10">
         <span className="type-label text-muted-foreground">04 / Experience</span>
         <h2 className="type-display mt-8 text-[13vw] leading-[0.82]">Where I&apos;ve built</h2>

@@ -3,11 +3,11 @@ import { METRICS } from "@/lib/site-data";
 
 export function Metrics() {
   return (
-    <section className="relative bg-void py-[16vh] text-void-foreground" aria-label="Numbers">
-      <div className="px-5 md:px-10">
+    <section className="relative px-4 py-20 md:px-6 md:py-28" aria-label="Numbers">
+      <div className="mx-auto max-w-5xl">
         <span className="type-label opacity-50">07 / Numbers</span>
       </div>
-      <dl className="mt-14 grid grid-cols-1 gap-px border-y border-white/10 bg-white/10 md:grid-cols-4">
+      <dl className="mx-auto mt-10 grid max-w-5xl grid-cols-2 gap-4 md:grid-cols-4">
         {METRICS.map((m, i) => (
           <motion.div
             key={m.label}
@@ -15,12 +15,12 @@ export function Metrics() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 0.7, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="bg-void px-5 py-14 md:px-8"
+            className="panel px-6 py-10"
           >
             <dt className="type-label opacity-50">{m.label}</dt>
             <dd
-              className={`type-display mt-6 text-[16vw] leading-none md:text-[6vw] ${
-                m.pending ? "opacity-20" : "text-accent"
+              className={`type-display mt-4 text-5xl leading-none md:text-6xl ${
+                m.pending ? "opacity-25" : "text-accent"
               }`}
             >
               {m.value}

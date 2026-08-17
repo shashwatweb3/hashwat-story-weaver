@@ -1,103 +1,74 @@
 import { useRef } from "react";
-import { motion, useScroll, useSpring, useTransform, useMotionValue } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { PERSON } from "@/lib/site-data";
+
+const ease = [0.22, 1, 0.36, 1] as const;
 
 export function Hero() {
   const ref = useRef<HTMLElement | null>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
 
-  const firstX = useTransform(scrollYProgress, [0, 1], ["0%", "-22%"]);
-  const lastX = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.72]);
-  const blur = useTransform(scrollYProgress, [0.4, 1], [0, 8]);
-  const filter = useTransform(blur, (b) => `blur(${b}px)`);
-  const fade = useTransform(scrollYProgress, [0.55, 1], [1, 0]);
-  const lift = useTransform(scrollYProgress, [0, 1], ["0%", "-14%"]);
-
-  // Mouse parallax
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const smx = useSpring(mx, { stiffness: 60, damping: 20 });
-  const smy = useSpring(my, { stiffness: 60, damping: 20 });
-  const tiltX = useTransform(smx, [-1, 1], [-18, 18]);
-  const tiltY = useTransform(smy, [-1, 1], [-10, 10]);
-
-  const onMove = (e: React.PointerEvent) => {
-    mx.set((e.clientX / window.innerWidth) * 2 - 1);
-    my.set((e.clientY / window.innerHeight) * 2 - 1);
-  };
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.86]);
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "-8%"]);
+  const fade = useTransform(scrollYProgress, [0.4, 1], [1, 0]);
 
   return (
-    <section
-      id="top"
-      ref={ref}
-      onPointerMove={onMove}
-      className="relative h-[190vh]"
-      aria-label="Introduction"
-    >
-      <div className="sticky top-0 flex h-screen flex-col justify-between overflow-hidden bg-void text-void-foreground">
-        <div className="pointer-events-none absolute inset-0 rule-grid opacity-[0.08]" />
+    <section id="top" ref={ref} className="relative pt-32 md:pt-40" aria-label="Introduction">
+      <motion.div style={{ scale, y, opacity: fade }} className="px-4 pb-16 md:px-6 md:pb-24">
+        {/* Retro machine, drawn in CSS — the screen holds the headline */}
+        <motion.div
+          initial={{ y: 60, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 1, ease }}
+          className="mx-auto w-full max-w-3xl rounded-[2.5rem] border-2 border-foreground bg-secondary p-5 shadow-[10px_10px_0_var(--ink)] md:p-8"
+        >
+          <div className="rounded-[1.75rem] border-2 border-foreground bg-void p-3 md:p-4">
+            <div className="flex aspect-[4/3] items-center justify-center rounded-[1.1rem] bg-card px-6 text-center md:aspect-[5/4] md:px-12">
+              <h1 className="type-display text-[9vw] leading-[1.02] md:text-6xl lg:text-7xl">
+                {PERSON.first}{" "}
+                <span className="italic text-accent">{PERSON.last}</span>
+                <span className="block">builds software,</span>
+                <span className="block">
+                  communities &amp; experiments
+                  <motion.span
+                    aria-hidden
+                    animate={{ opacity: [1, 0, 1] }}
+                    transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
+                  >
+                    _
+                  </motion.span>
+                </span>
+              </h1>
+            </div>
+          </div>
 
-        <motion.div style={{ opacity: fade, y: lift }} className="relative flex-1">
-          <div className="flex h-full flex-col justify-center">
-            <motion.h1
-              className="type-display px-5 md:px-10"
-              style={{ scale, filter }}
-            >
-              <motion.span
-                className="block text-[15vw] leading-[0.8]"
-                style={{ x: firstX, translateX: tiltX }}
-                initial={{ y: "22%", opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-              >
-                {PERSON.first}
-              </motion.span>
-              <motion.span
-                className="block text-right text-[17vw] leading-[0.8] text-accent"
-                style={{ x: lastX, translateY: tiltY }}
-                initial={{ y: "22%", opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 1.1, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-              >
-                {PERSON.last}
-              </motion.span>
-            </motion.h1>
+          <div className="mt-6 flex items-center justify-between gap-4">
+            <span className="type-label text-muted-foreground">{PERSON.role}</span>
+            <span className="h-3 w-24 rounded-sm border-2 border-foreground bg-card md:w-40" />
           </div>
         </motion.div>
 
         <motion.div
-          style={{ opacity: fade }}
-          className="relative grid gap-8 border-t border-white/10 px-5 py-6 md:grid-cols-3 md:px-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+          className="mx-auto mt-12 flex max-w-2xl flex-col items-center gap-4 text-center"
         >
-          <motion.p
-            className="type-label text-void-foreground/60"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-          >
-            {PERSON.role}
-          </motion.p>
-          <motion.p
-            className="max-w-md text-sm leading-relaxed text-void-foreground/75 md:col-span-1"
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.95, duration: 0.8 }}
-          >
+          <p className="text-base leading-relaxed text-muted-foreground md:text-lg">
             {PERSON.statement}
-          </motion.p>
-          <div className="flex items-end justify-start md:justify-end">
-            <motion.span
-              className="type-label flex items-center gap-3 text-void-foreground/60"
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-            >
-              Scroll
-              <span className="block h-8 w-px bg-current" />
-            </motion.span>
-          </div>
+          </p>
+          <motion.span
+            className="type-label flex flex-col items-center gap-2 text-foreground"
+            animate={{ y: [0, 7, 0] }}
+            transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+          >
+            Scroll down
+            <span aria-hidden className="text-base">
+              ↓
+            </span>
+          </motion.span>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 }
