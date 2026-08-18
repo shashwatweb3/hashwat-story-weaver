@@ -10,7 +10,7 @@ export function Work() {
       <div className="mx-auto max-w-5xl">
         <div className="flex items-end justify-between gap-6">
           <div>
-            <span className="type-label text-muted-foreground">01 / Selected work</span>
+            <span className="type-label text-muted-foreground">04 / Selected work</span>
             <h2 className="type-display mt-4 text-5xl md:text-6xl">
               Things I&apos;ve <span className="italic text-accent">built</span>
             </h2>

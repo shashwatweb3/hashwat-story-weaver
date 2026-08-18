@@ -12,7 +12,7 @@ export function About() {
   return (
     <section id="about" ref={ref} className="relative bg-background py-24" aria-label="About">
       <div className="px-5 md:px-10">
-        <span className="type-label text-muted-foreground">05 / About</span>
+        <span className="type-label text-muted-foreground">06 / About</span>
 
         <motion.ul style={{ y }} className="mt-12">
           {ROLES.map((r, i) => (

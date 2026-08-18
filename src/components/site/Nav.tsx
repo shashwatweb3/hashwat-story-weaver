@@ -4,10 +4,11 @@ import { Menu, X as XIcon } from "lucide-react";
 import { SOCIALS } from "@/lib/site-data";
 
 const LINKS = [
-  { label: "Work", href: "#work" },
-  { label: "Experience", href: "#experience" },
   { label: "Community", href: "#community" },
   { label: "Internet", href: "#internet" },
+  { label: "Blog", href: "#blog" },
+  { label: "Work", href: "#work" },
+  { label: "Experience", href: "#experience" },
   { label: "About", href: "#about" },
 ];
 
@@ -40,7 +41,7 @@ export function Nav() {
             Shashwat
           </a>
 
-          <div className="hidden items-center gap-7 md:flex">
+          <div className="hidden items-center gap-4 md:flex lg:gap-7">
             {LINKS.map((l) => (
               <a
                 key={l.href}

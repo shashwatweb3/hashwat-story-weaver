@@ -4,10 +4,11 @@ import { CustomCursor } from "@/components/site/CustomCursor";
 import { Nav } from "@/components/site/Nav";
 import { Hero } from "@/components/site/Hero";
 import { WhyDifferent } from "@/components/site/WhyDifferent";
-import { Work } from "@/components/site/Work";
-import { ExperienceList } from "@/components/site/ExperienceList";
 import { Community } from "@/components/site/Community";
 import { Internet } from "@/components/site/Internet";
+import { Blog } from "@/components/site/Blog";
+import { Work } from "@/components/site/Work";
+import { ExperienceList } from "@/components/site/ExperienceList";
 import { About } from "@/components/site/About";
 import { Footer } from "@/components/site/Footer";
 
@@ -37,10 +38,11 @@ function Index() {
       <main>
         <Hero />
         <WhyDifferent />
-        <Work />
-        <ExperienceList />
         <Community />
         <Internet />
+        <Blog />
+        <Work />
+        <ExperienceList />
         <About />
       </main>
       <Footer />

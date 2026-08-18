@@ -72,7 +72,7 @@ export function Internet() {
       id="internet"
       ref={ref}
       className="relative bg-background pb-16 pt-24 md:pb-20 md:pt-24 lg:pb-24 lg:pt-28"
-      aria-label="Section 04 — Internet"
+      aria-label="Section 02 — Internet"
     >
       <div className="px-5 md:px-10">
         <motion.div
@@ -82,7 +82,7 @@ export function Internet() {
           transition={{ duration: 0.7, ease }}
           className="flex items-center gap-4"
         >
-          <span className="type-label text-muted-foreground">04 / Internet</span>
+          <span className="type-label text-muted-foreground">02 / Internet</span>
           <span className="h-px flex-1 bg-border" />
         </motion.div>
 
