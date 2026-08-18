@@ -101,7 +101,7 @@ export function WhyDifferent() {
     setActive(next);
   });
 
-  const stage = STAGES[active];
+  const stage = STAGES[active] ?? STAGES[0]!;
 
   return (
     <section
