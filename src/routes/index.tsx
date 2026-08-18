@@ -44,6 +44,7 @@ function Index() {
         <Hero />
         <Intro />
         <WhatIDo />
+        <WhyDifferent />
         <Work />
         <ExperienceList />
         <Community />
