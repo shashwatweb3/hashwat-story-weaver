@@ -113,7 +113,7 @@ export function WhyDifferent() {
       {/* PINNED VIEWPORT */}
       <div className="sticky top-0 flex h-screen flex-col overflow-hidden">
         {/* Section chrome */}
-        <div className="flex items-center gap-4 px-5 pt-24 md:px-10">
+        <div className="flex items-center gap-4 px-5 pt-32 md:px-10">
           <span className="type-label text-muted-foreground">What makes me different?</span>
           <span className="h-px flex-1 bg-foreground/15" />
           <span className="type-label text-muted-foreground">
