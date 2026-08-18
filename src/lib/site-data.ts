@@ -195,11 +195,67 @@ export const METRICS: { value: string; label: string; pending?: boolean }[] = [
 
 export const ECOSYSTEM = ["Vara Network", "Monaris", "Lucknow DAO"];
 
-/** X posts — add real posts / embeds here later. */
-export const POSTS: { id: string; text?: string; href?: string }[] = [
-  { id: "post-1" },
-  { id: "post-2" },
-  { id: "post-3" },
+/** X posts — real posts from @Shashwat_web3, content fetched from the live posts. */
+export type XPost = {
+  id: string;
+  url: string;
+  date: string;
+  text: string;
+  favorites: number;
+  media?: { thumb: string; aspect: string };
+  link?: { label: string; url: string };
+};
+
+export const X_POSTS: XPost[] = [
+  {
+    id: "2078455006051631421",
+    url: "https://x.com/Shashwat_web3/status/2078455006051631421",
+    date: "Jul 18, 2026",
+    favorites: 21,
+    media: {
+      thumb:
+        "https://pbs.twimg.com/amplify_video_thumb/2078453522199109632/img/tDRRuSEjgj-ctHsy.jpg?format=jpg&name=medium",
+      aspect: "aspect-square",
+    },
+    text: "I enjoy seeing ideas turn into products people can actually use.\n\nHere's a quick rundown of three projects already live on @VaraNetwork:\n\n@smartcupleague, @GrowwStreams, and @Rivr_DEX.",
+  },
+  {
+    id: "2086433681301020911",
+    url: "https://x.com/Shashwat_web3/status/2086433681301020911",
+    date: "Aug 9, 2026",
+    favorites: 1153,
+    media: {
+      thumb:
+        "https://pbs.twimg.com/amplify_video_thumb/2086432028438999040/img/ta8faJVNCdIAEHFE.jpg?format=jpg&name=medium",
+      aspect: "aspect-[16/10]",
+    },
+    link: { label: "safar-e-up.vercel.app", url: "https://safar-e-up.vercel.app/" },
+    text: "Following the trend, I made a website where you can literally board an उत्तर प्रदेश परिवहन bus and listen to 90s songs.\n\nNo idea if this was necessary.\nBut it had to exist. 🚌\n\nसफ़र-ए-UP →",
+  },
+  {
+    id: "2044776907494113699",
+    url: "https://x.com/Shashwat_web3/status/2044776907494113699",
+    date: "Apr 16, 2026",
+    favorites: 35,
+    media: {
+      thumb:
+        "https://pbs.twimg.com/amplify_video_thumb/2044761318516043776/img/nbOcfdcfSp6ieDpS.jpg?format=jpg&name=medium",
+      aspect: "aspect-[3/2]",
+    },
+    text: "Everyone's talking about AI.\nVery few are actually building with it.\n\nUsing @VaraNetwork's Agentic Framework (Vara Skills), I turned a simple idea into a working product:\n\n👉 VaraSplit\n\nA system where every settlement becomes verifiable on-chain\n\n#varaskills",
+  },
+  {
+    id: "1998258241067995494",
+    url: "https://x.com/Shashwat_web3/status/1998258241067995494",
+    date: "Dec 9, 2025",
+    favorites: 62,
+    media: {
+      thumb:
+        "https://pbs.twimg.com/ext_tw_video_thumb/1998258037438746624/pu/img/jUDraLd6gs22FiJT.jpg?format=jpg&name=medium",
+      aspect: "aspect-video",
+    },
+    text: "A quick chat. A new Web3 dev born. 👀\n\nOn a mission to bring more people on-chain. 💚⛓️",
+  },
 ];
 
 export type BlogPost = {
