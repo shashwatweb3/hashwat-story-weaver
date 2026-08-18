@@ -1286,18 +1286,6 @@ All provided links should work.
 
 Use polished placeholder visuals only where actual project assets have not yet been provided, and structure those areas so real assets can be swapped in easily later.
 
-This project was built with [Lovable](https://lovable.dev).
-
-**Live app**: https://hashwat-story-weaver.lovable.app
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/54e62c12-362e-4983-a243-1026f32c80ed).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
 ## Development
 
 Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
@@ -1307,4 +1295,15 @@ git clone <this-repository-url>
 cd <repository-name>
 npm i
 npm run dev
+```
+
+## Deployment
+
+Production is deployed from GitHub through Vercel:
+
+- **Live app**: https://www.shashwat.fun
+
+```sh
+npm run lint   # lint
+npm run build  # production build
 ```
