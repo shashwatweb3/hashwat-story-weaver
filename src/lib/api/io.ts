@@ -61,8 +61,15 @@ function getArticlesDir(): string {
   return resolve(process.cwd(), ARTICLES_DIR);
 }
 
-function ensureDir(): void {
-  mkdirSync(getArticlesDir(), { recursive: true });
+function ensureDir(): boolean {
+  try {
+    mkdirSync(getArticlesDir(), { recursive: true });
+    return true;
+  } catch {
+    // Filesystem is unavailable (e.g. serverless/edge runtime). Public reads
+    // must degrade to empty results instead of crashing the request.
+    return false;
+  }
 }
 
 type Frontmatter = {
@@ -96,8 +103,12 @@ function parseArticleFile(file: string): Article | null {
 }
 
 function listFiles(): string[] {
-  ensureDir();
-  return readdirSync(getArticlesDir()).filter((f) => f.endsWith(".md"));
+  if (!ensureDir()) return [];
+  try {
+    return readdirSync(getArticlesDir()).filter((f) => f.endsWith(".md"));
+  } catch {
+    return [];
+  }
 }
 
 function serializeArticle(input: ArticleInput): string {
@@ -138,15 +149,24 @@ export function validateInput(input: ArticleInput): string | null {
 
 export function listArticleFiles(): Article[] {
   const files = listFiles();
-  return files
-    .map((f) => parseArticleFile(resolve(getArticlesDir(), f)))
-    .filter((a): a is Article => a !== null);
+  return files.flatMap((f) => {
+    try {
+      const article = parseArticleFile(resolve(getArticlesDir(), f));
+      return article ? [article] : [];
+    } catch {
+      return [];
+    }
+  });
 }
 
 export function readArticleFile(slug: string): Article | null {
-  const file = resolve(getArticlesDir(), `${slug}.md`);
-  if (!existsSync(file)) return null;
-  return parseArticleFile(file);
+  try {
+    const file = resolve(getArticlesDir(), `${slug}.md`);
+    if (!existsSync(file)) return null;
+    return parseArticleFile(file);
+  } catch {
+    return null;
+  }
 }
 
 export function saveArticleFile(
@@ -155,23 +175,31 @@ export function saveArticleFile(
 ): { ok: boolean; error?: string } {
   const error = validateInput(input);
   if (error) return { ok: false, error };
-  ensureDir();
-  if (input.slug !== originalSlug) {
-    const clash = resolve(getArticlesDir(), `${input.slug}.md`);
-    if (existsSync(clash)) return { ok: false, error: "That slug is already in use." };
-    if (originalSlug) {
-      const old = resolve(getArticlesDir(), `${originalSlug}.md`);
-      if (existsSync(old)) unlinkSync(old);
+  if (!ensureDir()) return { ok: false, error: "Article storage is unavailable on this server." };
+  try {
+    if (input.slug !== originalSlug) {
+      const clash = resolve(getArticlesDir(), `${input.slug}.md`);
+      if (existsSync(clash)) return { ok: false, error: "That slug is already in use." };
+      if (originalSlug) {
+        const old = resolve(getArticlesDir(), `${originalSlug}.md`);
+        if (existsSync(old)) unlinkSync(old);
+      }
     }
+    const target = resolve(getArticlesDir(), `${input.slug}.md`);
+    writeFileSync(target, serializeArticle(input), "utf8");
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "Could not save the article." };
   }
-  const target = resolve(getArticlesDir(), `${input.slug}.md`);
-  writeFileSync(target, serializeArticle(input), "utf8");
-  return { ok: true };
 }
 
 export function deleteArticleFile(slug: string): void {
-  const file = resolve(getArticlesDir(), `${slug}.md`);
-  if (existsSync(file)) unlinkSync(file);
+  try {
+    const file = resolve(getArticlesDir(), `${slug}.md`);
+    if (existsSync(file)) unlinkSync(file);
+  } catch {
+    // no-op: nothing to delete when storage is unavailable
+  }
 }
 
 const ALLOWED_TAGS = [

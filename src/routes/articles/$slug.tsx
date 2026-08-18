@@ -9,6 +9,7 @@ export const Route = createFileRoute("/articles/$slug")({
     return page;
   },
   head: ({ loaderData }) => {
+    if (!loaderData) return;
     const a = loaderData.article;
     return {
       meta: [
