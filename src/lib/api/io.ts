@@ -21,21 +21,36 @@ import { isValidSlug } from "../slug";
 
 marked.setOptions({ gfm: true, breaks: false });
 
+function findEnvFile(): string | null {
+  // Walk up from the current working directory so this also works when the
+  // server runs from a build output (e.g. .output/server) instead of the
+  // project root (dev server / local node runtime).
+  let dir = process.cwd();
+  for (let depth = 0; depth < 5; depth++) {
+    const candidate = resolve(dir, ".env.local");
+    if (existsSync(candidate)) return candidate;
+    const parent = resolve(dir, "..");
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return null;
+}
+
 /** Reads process.env first, then a gitignored `.env.local` in the project root. */
 export function getServerEnv(): Record<string, string> {
   const env: Record<string, string> = { ...(process.env as Record<string, string>) };
-  try {
-    const file = resolve(process.cwd(), ".env.local");
-    if (existsSync(file)) {
+  const file = findEnvFile();
+  if (file) {
+    try {
       for (const line of readFileSync(file, "utf8").split("\n")) {
         const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
         if (m && !(m[1] in env)) {
           env[m[1]] = m[2].replace(/^["']|["']$/g, "").trim();
         }
       }
+    } catch {
+      // fall through to process.env only
     }
-  } catch {
-    // fall through to process.env only
   }
   return env;
 }
