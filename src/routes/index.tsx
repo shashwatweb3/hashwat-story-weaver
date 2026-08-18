@@ -5,6 +5,7 @@ import { Nav } from "@/components/site/Nav";
 import { Hero } from "@/components/site/Hero";
 import { Intro } from "@/components/site/Intro";
 import { WhatIDo } from "@/components/site/WhatIDo";
+import { WhyDifferent } from "@/components/site/WhyDifferent";
 import { Work } from "@/components/site/Work";
 import { ExperienceList } from "@/components/site/ExperienceList";
 import { Community } from "@/components/site/Community";
