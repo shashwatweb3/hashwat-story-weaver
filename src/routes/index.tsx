@@ -3,18 +3,12 @@ import { SmoothScroll } from "@/components/site/SmoothScroll";
 import { CustomCursor } from "@/components/site/CustomCursor";
 import { Nav } from "@/components/site/Nav";
 import { Hero } from "@/components/site/Hero";
-import { Intro } from "@/components/site/Intro";
-import { WhatIDo } from "@/components/site/WhatIDo";
 import { WhyDifferent } from "@/components/site/WhyDifferent";
 import { Work } from "@/components/site/Work";
 import { ExperienceList } from "@/components/site/ExperienceList";
 import { Community } from "@/components/site/Community";
-import { Ecosystem } from "@/components/site/Ecosystem";
-import { Metrics } from "@/components/site/Metrics";
 import { Internet } from "@/components/site/Internet";
 import { About } from "@/components/site/About";
-import { Blog } from "@/components/site/Blog";
-import { FinalCta } from "@/components/site/FinalCta";
 import { Footer } from "@/components/site/Footer";
 
 const TITLE = "Shashwat Chauhan — Software Engineer & Web3 Builder";
@@ -42,18 +36,12 @@ function Index() {
       <Nav />
       <main>
         <Hero />
-        <Intro />
-        <WhatIDo />
         <WhyDifferent />
         <Work />
         <ExperienceList />
         <Community />
-        <Ecosystem />
-        <Metrics />
         <Internet />
-        <Blog />
         <About />
-        <FinalCta />
       </main>
       <Footer />
     </SmoothScroll>

@@ -86,10 +86,10 @@ export function Community() {
   const gallery: GalleryItem[] = files && files.length > 0 ? files : FALLBACK_GALLERY;
 
   return (
-    <section ref={ref} className="relative h-[180vh]" aria-label="Section 05 — Community">
+    <section ref={ref} id="community" className="relative h-[180vh]" aria-label="Section 03 — Community">
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
         <div className="mx-auto w-full max-w-5xl px-4 md:px-6">
-          <span className="type-label text-muted-foreground">05 / Community</span>
+          <span className="type-label text-muted-foreground">03 / Community</span>
           <motion.h2
             initial={{ y: 40, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}

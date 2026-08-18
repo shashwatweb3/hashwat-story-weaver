@@ -167,34 +167,6 @@ export const EXPERIENCE: Experience[] = [
   },
 ];
 
-export const DISCIPLINES = [
-  {
-    word: "Build",
-    body: "Software, Web3 products, experiments and developer-focused tools.",
-  },
-  {
-    word: "Grow",
-    body: "Helping products and ecosystems reach users and communities.",
-  },
-  {
-    word: "Experiment",
-    body: "Building MVPs, prototypes and unconventional ideas.",
-  },
-  {
-    word: "Connect",
-    body: "Community building, developer advocacy, events and ecosystem work.",
-  },
-];
-
-export const METRICS: { value: string; label: string; pending?: boolean }[] = [
-  { value: "20+", label: "Projects completed" },
-  { value: "—", label: "Events", pending: true },
-  { value: "—", label: "Communities", pending: true },
-  { value: "—", label: "Products shipped", pending: true },
-];
-
-export const ECOSYSTEM = ["Vara Network", "Monaris", "Lucknow DAO"];
-
 /** X posts — real posts from @Shashwat_web3, content fetched from the live posts. */
 export type XPost = {
   id: string;
@@ -255,45 +227,5 @@ export const X_POSTS: XPost[] = [
       aspect: "aspect-video",
     },
     text: "A quick chat. A new Web3 dev born. 👀\n\nOn a mission to bring more people on-chain. 💚⛓️",
-  },
-];
-
-export type BlogPost = {
-  title: string;
-  excerpt: string;
-  date: string;
-  tag: string;
-  href?: string;
-};
-
-/** Replace with real posts / links any time. */
-export const POSTS_BLOG: BlogPost[] = [
-  {
-    title: "Why on-chain settlement beats a spreadsheet",
-    excerpt:
-      "What building VaraSplit taught me about turning informal group money into programmable, verifiable workflows.",
-    date: "2026",
-    tag: "Web3",
-  },
-  {
-    title: "Shipping MVPs that survive first contact",
-    excerpt:
-      "A working method for going from idea to a usable product in days, not quarters — and knowing what to cut.",
-    date: "2026",
-    tag: "Building",
-  },
-  {
-    title: "Building Lucknow DAO from zero",
-    excerpt:
-      "Notes on starting a local Web3 community: the first ten people matter more than the first thousand.",
-    date: "2025",
-    tag: "Community",
-  },
-  {
-    title: "Developer advocacy is a product role",
-    excerpt:
-      "Lessons from the Vara ecosystem on treating docs, demos and developer experience as the actual product.",
-    date: "2025",
-    tag: "Ecosystem",
   },
 ];

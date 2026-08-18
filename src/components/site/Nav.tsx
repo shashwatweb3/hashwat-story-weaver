@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Menu, X as XIcon } from "lucide-react";
+import { SOCIALS } from "@/lib/site-data";
 
 const LINKS = [
   { label: "Work", href: "#work" },
-  { label: "What I do", href: "#what-i-do" },
   { label: "Experience", href: "#experience" },
-  { label: "Blog", href: "#blog" },
+  { label: "Community", href: "#community" },
+  { label: "Internet", href: "#internet" },
+  { label: "About", href: "#about" },
 ];
 
 export function Nav() {
@@ -52,7 +54,9 @@ export function Nav() {
 
           <div className="flex items-center gap-2">
             <a
-              href="#contact"
+              href={SOCIALS[0]!.href}
+              target="_blank"
+              rel="noreferrer noopener"
               data-cursor="Say hi"
               className="hidden rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-transform hover:-translate-y-0.5 md:inline-block"
             >
@@ -86,7 +90,7 @@ export function Nav() {
               </button>
             </div>
             <ul className="mt-6 px-6">
-              {[...LINKS, { label: "Contact", href: "#contact" }].map((l, i) => (
+              {[...LINKS, { label: "Contact", href: SOCIALS[0]!.href }].map((l, i) => (
                 <motion.li
                   key={l.href}
                   initial={{ y: 30, opacity: 0 }}
@@ -94,7 +98,14 @@ export function Nav() {
                   transition={{ delay: 0.12 + i * 0.06, ease: [0.22, 1, 0.36, 1] }}
                   className="border-b border-border py-5"
                 >
-                  <a href={l.href} onClick={() => setOpen(false)} className="type-display text-5xl">
+                  <a
+                    href={l.href}
+                    onClick={() => setOpen(false)}
+                    {...(l.href.startsWith("http")
+                      ? { target: "_blank", rel: "noreferrer noopener" }
+                      : {})}
+                    className="type-display text-5xl"
+                  >
                     {l.label}
                   </a>
                 </motion.li>

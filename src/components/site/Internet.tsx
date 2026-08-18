@@ -58,9 +58,9 @@ export function Internet() {
   const [featured, ...rest] = X_POSTS;
 
   return (
-    <section className="relative bg-background py-24" aria-label="Section 08 — Internet">
+    <section id="internet" className="relative bg-background py-24" aria-label="Section 04 — Internet">
       <div className="px-5 md:px-10">
-        <span className="type-label text-muted-foreground">08 / Internet</span>
+        <span className="type-label text-muted-foreground">04 / Internet</span>
         <motion.h2
           initial={{ opacity: 0, y: 34 }}
           whileInView={{ opacity: 1, y: 0 }}
