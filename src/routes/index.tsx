@@ -11,12 +11,17 @@ import { Work } from "@/components/site/Work";
 import { ExperienceList } from "@/components/site/ExperienceList";
 import { About } from "@/components/site/About";
 import { Footer } from "@/components/site/Footer";
+import { listArticles } from "@/lib/api/articles";
 
 const TITLE = "Shashwat Chauhan — Software Engineer & Web3 Builder";
 const DESCRIPTION =
   "Portfolio of Shashwat Chauhan: software engineer, Web3 builder and community builder. Projects include Shepherd, TradeVault Arena, VaraSplit and Flekvar.";
 
 export const Route = createFileRoute("/")({
+  loader: async () => {
+    const articles = await listArticles();
+    return { articles };
+  },
   head: () => ({
     meta: [
       { title: TITLE },
@@ -31,6 +36,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const { articles } = Route.useLoaderData();
   return (
     <SmoothScroll>
       <CustomCursor />
@@ -40,7 +46,7 @@ function Index() {
         <WhyDifferent />
         <Community />
         <Internet />
-        <Blog />
+        <Blog articles={articles} />
         <Work />
         <ExperienceList />
         <About />

@@ -24,6 +24,11 @@ const csrfMiddleware = createCsrfMiddleware({
   filter: (ctx) => ctx.handlerType === "serverFn",
 });
 
+// Exposes the current web Request to server functions via ctx.context.request.
+const requestContext = createMiddleware().server(async ({ next, request }) => {
+  return next({ context: { request } });
+});
+
 export const startInstance = createStart(() => ({
-  requestMiddleware: [errorMiddleware, csrfMiddleware],
+  requestMiddleware: [errorMiddleware, csrfMiddleware, requestContext],
 }));
