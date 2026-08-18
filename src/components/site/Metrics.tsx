@@ -25,9 +25,7 @@ export function Metrics() {
             >
               {m.value}
             </dd>
-            {m.pending ? (
-              <p className="mt-4 type-label opacity-35">Slot reserved</p>
-            ) : null}
+            {m.pending ? <p className="mt-4 type-label opacity-35">Slot reserved</p> : null}
           </motion.div>
         ))}
       </dl>

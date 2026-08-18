@@ -25,8 +25,7 @@ export function Hero() {
           <div className="rounded-[1.75rem] border-2 border-foreground bg-void p-3 md:p-4">
             <div className="flex aspect-[4/3] items-center justify-center rounded-[1.1rem] bg-card px-6 text-center md:aspect-[5/4] md:px-12">
               <h1 className="type-display text-[9vw] leading-[1.02] md:text-6xl lg:text-7xl">
-                {PERSON.first}{" "}
-                <span className="italic text-accent">{PERSON.last}</span>
+                {PERSON.first} <span className="italic text-accent">{PERSON.last}</span>
                 <span className="block">builds software,</span>
                 <span className="block">
                   communities &amp; experiments

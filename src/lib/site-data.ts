@@ -115,17 +115,56 @@ export const PROJECTS: Project[] = [
 export type Experience = {
   role: string;
   org: string;
-  /** Optional — easy to fill in later. */
-  note?: string;
+  status: "PREVIOUS" | "CURRENT";
+  description: string;
+  /** Optional — highlight a substring of the description in the accent colour. */
+  highlight?: string;
 };
 
 export const EXPERIENCE: Experience[] = [
-  { role: "Software Engineer", org: "Learnqoch — Mumbai" },
-  { role: "Software Engineer", org: "Laxkal Technologies" },
-  { role: "Freelance Software Engineer", org: "20+ projects completed" },
-  { role: "Growth", org: "Monaris" },
-  { role: "Developer Advocate", org: "Vara Network" },
-  { role: "Community", org: "Lucknow DAO" },
+  {
+    role: "Software Engineer",
+    org: "Learnqoch — Mumbai",
+    status: "PREVIOUS",
+    description:
+      "Worked as a Software Engineer building backend APIs and software solutions, contributing to product development and engineering workflows.",
+  },
+  {
+    role: "Software Engineer",
+    org: "Laxkal Technologies",
+    status: "PREVIOUS",
+    description:
+      "Worked as a Software Engineer, contributing to software development and building practical digital solutions for products and clients.",
+  },
+  {
+    role: "Freelance Software Engineer",
+    org: "Independent",
+    status: "CURRENT",
+    description:
+      "Built and shipped 20+ websites, applications and software projects, taking ideas from concept to working products.",
+    highlight: "20+",
+  },
+  {
+    role: "Co-leading",
+    org: "Lucknow DAO",
+    status: "CURRENT",
+    description:
+      "Co-leading Lucknow DAO, building the local Web3 community through events, workshops, ecosystem initiatives and developer-focused programs.",
+  },
+  {
+    role: "Growth Lead",
+    org: "Monaris",
+    status: "CURRENT",
+    description:
+      "Leading growth at Monaris around Private Payments and programmable money, helping grow the product and ecosystem.",
+  },
+  {
+    role: "Developer Advocate",
+    org: "Vara Network",
+    status: "CURRENT",
+    description:
+      "Working as a Developer Advocate at Vara Network, helping developers discover, understand and build with Vara through technical content, community initiatives and ecosystem programs.",
+  },
 ];
 
 export const DISCIPLINES = [

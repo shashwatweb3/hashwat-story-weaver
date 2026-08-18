@@ -104,12 +104,7 @@ export function WhyDifferent() {
   const stage = STAGES[active] ?? STAGES[0]!;
 
   return (
-    <section
-      ref={ref}
-      id="why"
-      className="relative h-[400vh]"
-      aria-label="What makes me different"
-    >
+    <section ref={ref} id="why" className="relative h-[400vh]" aria-label="What makes me different">
       {/* PINNED VIEWPORT */}
       <div className="sticky top-0 flex h-screen flex-col overflow-hidden">
         {/* Section chrome */}
@@ -150,7 +145,10 @@ export function WhyDifferent() {
                 width={1024}
                 height={1024}
                 className="pointer-events-none absolute inset-0 z-20 w-full mix-blend-color"
-                animate={{ opacity: reduced ? 0 : 0.55, filter: `drop-shadow(0 0 0 ${stage.lobe})` }}
+                animate={{
+                  opacity: reduced ? 0 : 0.55,
+                  filter: `drop-shadow(0 0 0 ${stage.lobe})`,
+                }}
                 style={{ backgroundColor: "transparent" }}
                 transition={power3}
               />
@@ -172,9 +170,7 @@ export function WhyDifferent() {
                   initial={{ opacity: 0, scale: reduced ? 1 : 0.7 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.7 }}
-                  transition={
-                    reduced ? { duration: 0 } : { ...spring, delay: i * 0.1 }
-                  }
+                  transition={reduced ? { duration: 0 } : { ...spring, delay: i * 0.1 }}
                 >
                   {label.text}
                 </motion.span>

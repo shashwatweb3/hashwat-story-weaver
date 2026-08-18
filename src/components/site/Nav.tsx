@@ -94,11 +94,7 @@ export function Nav() {
                   transition={{ delay: 0.12 + i * 0.06, ease: [0.22, 1, 0.36, 1] }}
                   className="border-b border-border py-5"
                 >
-                  <a
-                    href={l.href}
-                    onClick={() => setOpen(false)}
-                    className="type-display text-5xl"
-                  >
+                  <a href={l.href} onClick={() => setOpen(false)} className="type-display text-5xl">
                     {l.label}
                   </a>
                 </motion.li>

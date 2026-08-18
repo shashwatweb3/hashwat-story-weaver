@@ -23,7 +23,9 @@ export function Footer() {
             </li>
           ))}
         </ul>
-        <p className="type-label opacity-35">© {new Date().getFullYear()} {PERSON.name}</p>
+        <p className="type-label opacity-35">
+          © {new Date().getFullYear()} {PERSON.name}
+        </p>
       </div>
     </footer>
   );

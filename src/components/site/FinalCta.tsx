@@ -7,7 +7,11 @@ import { MagneticButton } from "./MagneticButton";
 export function FinalCta() {
   const ref = useRef<HTMLElement | null>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
-  const clip = useTransform(scrollYProgress, [0, 0.45], ["inset(18% 6% 18% 6%)", "inset(0% 0% 0% 0%)"]);
+  const clip = useTransform(
+    scrollYProgress,
+    [0, 0.45],
+    ["inset(18% 6% 18% 6%)", "inset(0% 0% 0% 0%)"],
+  );
   const scale = useTransform(scrollYProgress, [0, 0.45], [0.92, 1]);
 
   return (
