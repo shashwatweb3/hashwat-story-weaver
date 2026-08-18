@@ -1,20 +1,12 @@
-import {
-  readFileSync,
-  existsSync,
-  mkdirSync,
-  readdirSync,
-  writeFileSync,
-  unlinkSync,
-} from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
-import matter from "gray-matter";
 import { marked } from "marked";
 import sanitizeHtml from "sanitize-html";
-import type { Article, ArticleInput } from "../article-types";
+import type { ArticleInput } from "../article-types";
 import { isValidSlug } from "../slug";
 
 /**
- * Node-only implementation layer for the article + auth server functions.
+ * Server-only helpers for the article + auth server functions.
  * This module must ONLY be loaded via `await import("./io")` from server fn
  * handlers — it is never statically imported by client code.
  */
@@ -55,86 +47,6 @@ export function getServerEnv(): Record<string, string> {
   return env;
 }
 
-const ARTICLES_DIR = "content/articles";
-
-function getArticlesDir(): string {
-  return resolve(process.cwd(), ARTICLES_DIR);
-}
-
-function ensureDir(): boolean {
-  try {
-    mkdirSync(getArticlesDir(), { recursive: true });
-    return true;
-  } catch {
-    // Filesystem is unavailable (e.g. serverless/edge runtime). Public reads
-    // must degrade to empty results instead of crashing the request.
-    return false;
-  }
-}
-
-type Frontmatter = {
-  title?: unknown;
-  excerpt?: unknown;
-  category?: unknown;
-  tags?: unknown;
-  coverImage?: unknown;
-  publishedAt?: unknown;
-  published?: unknown;
-};
-
-function parseArticleFile(file: string): Article | null {
-  const raw = readFileSync(file, "utf8");
-  const { data, content } = matter(raw);
-  const fm = data as Frontmatter;
-  const slug = file.slice(0, -3).split("/").pop() ?? "";
-  if (!slug) return null;
-  return {
-    slug,
-    title: typeof fm.title === "string" ? fm.title.trim() : "",
-    excerpt: typeof fm.excerpt === "string" ? fm.excerpt.trim() : "",
-    category: typeof fm.category === "string" ? fm.category.trim() : "",
-    tags: Array.isArray(fm.tags) ? fm.tags.filter((t): t is string => typeof t === "string") : [],
-    coverImage:
-      typeof fm.coverImage === "string" && fm.coverImage.trim() ? fm.coverImage.trim() : undefined,
-    publishedAt: typeof fm.publishedAt === "string" ? fm.publishedAt.trim() : "",
-    published: fm.published === true,
-    content,
-  };
-}
-
-function listFiles(): string[] {
-  if (!ensureDir()) return [];
-  try {
-    return readdirSync(getArticlesDir()).filter((f) => f.endsWith(".md"));
-  } catch {
-    return [];
-  }
-}
-
-function serializeArticle(input: ArticleInput): string {
-  const tags = input.tags.filter(Boolean);
-  const cover = input.coverImage?.trim() ?? "";
-  const fm: Record<string, string | string[] | boolean> = {
-    title: input.title,
-    slug: input.slug,
-    excerpt: input.excerpt,
-    category: input.category,
-    tags,
-    published: input.published,
-  };
-  if (cover) fm.coverImage = cover;
-  if (input.publishedAt) fm.publishedAt = input.publishedAt;
-  const head = Object.entries(fm)
-    .map(([k, v]) => {
-      if (Array.isArray(v)) return `${k}: ${JSON.stringify(v)}`;
-      if (typeof v === "boolean") return `${k}: ${v}`;
-      return `${k}: ${JSON.stringify(v)}`;
-    })
-    .join("\n");
-  const body = input.content.trimEnd();
-  return `---\n${head}\n---\n\n${body}\n`;
-}
-
 export function validateInput(input: ArticleInput): string | null {
   if (!input.title.trim()) return "Title is required.";
   if (!isValidSlug(input.slug)) return "Slug must be lowercase letters, numbers and hyphens.";
@@ -145,61 +57,6 @@ export function validateInput(input: ArticleInput): string | null {
     return "Publication date must be YYYY-MM-DD.";
   }
   return null;
-}
-
-export function listArticleFiles(): Article[] {
-  const files = listFiles();
-  return files.flatMap((f) => {
-    try {
-      const article = parseArticleFile(resolve(getArticlesDir(), f));
-      return article ? [article] : [];
-    } catch {
-      return [];
-    }
-  });
-}
-
-export function readArticleFile(slug: string): Article | null {
-  try {
-    const file = resolve(getArticlesDir(), `${slug}.md`);
-    if (!existsSync(file)) return null;
-    return parseArticleFile(file);
-  } catch {
-    return null;
-  }
-}
-
-export function saveArticleFile(
-  input: ArticleInput,
-  originalSlug?: string,
-): { ok: boolean; error?: string } {
-  const error = validateInput(input);
-  if (error) return { ok: false, error };
-  if (!ensureDir()) return { ok: false, error: "Article storage is unavailable on this server." };
-  try {
-    if (input.slug !== originalSlug) {
-      const clash = resolve(getArticlesDir(), `${input.slug}.md`);
-      if (existsSync(clash)) return { ok: false, error: "That slug is already in use." };
-      if (originalSlug) {
-        const old = resolve(getArticlesDir(), `${originalSlug}.md`);
-        if (existsSync(old)) unlinkSync(old);
-      }
-    }
-    const target = resolve(getArticlesDir(), `${input.slug}.md`);
-    writeFileSync(target, serializeArticle(input), "utf8");
-    return { ok: true };
-  } catch {
-    return { ok: false, error: "Could not save the article." };
-  }
-}
-
-export function deleteArticleFile(slug: string): void {
-  try {
-    const file = resolve(getArticlesDir(), `${slug}.md`);
-    if (existsSync(file)) unlinkSync(file);
-  } catch {
-    // no-op: nothing to delete when storage is unavailable
-  }
 }
 
 const ALLOWED_TAGS = [

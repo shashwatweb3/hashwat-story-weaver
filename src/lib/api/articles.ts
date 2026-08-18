@@ -1,10 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { authMiddleware } from "./auth";
-import type { Article, ArticleInput } from "./article-types";
+import type { Article, ArticleInput } from "../article-types";
 
 type Io = typeof import("./io");
+type Storage = typeof import("./storage");
 
 const io = () => import("./io") as Promise<Io>;
+const storage = () => import("./storage") as Promise<Storage>;
 
 function sortArticles(articles: Article[], includeDrafts: boolean): Article[] {
   const visible = articles.filter((a) => includeDrafts || a.published);
@@ -17,32 +19,46 @@ function sortArticles(articles: Article[], includeDrafts: boolean): Article[] {
 
 export const listArticles = createServerFn({ method: "GET" }).handler(async ({ data }) => {
   const { includeDrafts } = (data ?? {}) as { includeDrafts?: boolean };
-  const m = await io();
-  return sortArticles(m.listArticleFiles(), includeDrafts === true);
+  try {
+    const all = await (await storage()).listStoredArticles();
+    return sortArticles(all, includeDrafts === true);
+  } catch {
+    return [];
+  }
 });
 
 export const getArticle = createServerFn({ method: "GET" }).handler(async ({ data }) => {
   const { slug } = data as { slug: string };
-  const m = await io();
-  return m.readArticleFile(slug);
+  try {
+    return await (await storage()).getStoredArticle(slug);
+  } catch {
+    return null;
+  }
 });
 
 export const getPublishedArticle = createServerFn({ method: "GET" }).handler(async ({ data }) => {
   const { slug } = data as { slug: string };
-  const m = await io();
-  const article = m.readArticleFile(slug);
-  if (!article || !article.published) return null;
-  return article;
+  try {
+    const article = await (await storage()).getStoredArticle(slug);
+    if (!article || !article.published) return null;
+    return article;
+  } catch {
+    return null;
+  }
 });
 
 /** Public article page payload: sanitized HTML stays on the server. */
 export const getPublishedArticlePage = createServerFn({ method: "GET" }).handler(
   async ({ data }) => {
     const { slug } = data as { slug: string };
-    const m = await io();
-    const article = m.readArticleFile(slug);
-    if (!article || !article.published) return null;
-    return { article, html: m.renderArticleHtml(article.content) };
+    try {
+      const article = await (await storage()).getStoredArticle(slug);
+      if (!article || !article.published) return null;
+      const m = await io();
+      return { article, html: m.renderArticleHtml(article.content) };
+    } catch {
+      return null;
+    }
   },
 );
 
@@ -51,8 +67,11 @@ export const saveArticle = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     if (!context.isAdmin) throw new Error("Unauthorized");
     const { input, originalSlug } = data as { input: ArticleInput; originalSlug?: string };
-    const m = await io();
-    return m.saveArticleFile(input, originalSlug);
+    try {
+      return await (await storage()).saveStoredArticle(input, originalSlug);
+    } catch {
+      return { ok: false, error: "Could not save the article. Please try again later." };
+    }
   });
 
 export const deleteArticle = createServerFn({ method: "POST" })
@@ -60,7 +79,10 @@ export const deleteArticle = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     if (!context.isAdmin) throw new Error("Unauthorized");
     const { slug } = data as { slug: string };
-    const m = await io();
-    m.deleteArticleFile(slug);
-    return { ok: true };
+    try {
+      await (await storage()).deleteStoredArticle(slug);
+      return { ok: true };
+    } catch {
+      return { ok: false, error: "Could not delete the article. Please try again later." };
+    }
   });

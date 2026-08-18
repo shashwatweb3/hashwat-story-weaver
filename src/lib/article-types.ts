@@ -1,4 +1,7 @@
+export type ArticleStatus = "DRAFT" | "PUBLISHED";
+
 export type Article = {
+  id: string;
   slug: string;
   title: string;
   excerpt: string;
@@ -10,6 +13,8 @@ export type Article = {
   published: boolean;
   /** Markdown body. */
   content: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type ArticleInput = {
@@ -24,4 +29,6 @@ export type ArticleInput = {
   content: string;
 };
 
-export const ARTICLES_DIR_NAME = "content/articles";
+export type StoredArticle = Omit<Article, "published"> & {
+  status: ArticleStatus;
+};
