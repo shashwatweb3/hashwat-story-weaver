@@ -1,4 +1,4 @@
-import { createFileRoute, redirect, Link } from "@tanstack/react-router";
+import { createFileRoute, redirect, Link, useRouterState } from "@tanstack/react-router";
 import { isAdmin } from "@/lib/api/auth";
 import { getArticle } from "@/lib/api/articles";
 import { ArticleEditor } from "@/components/admin/ArticleEditor";
@@ -17,6 +17,9 @@ export const Route = createFileRoute("/admin/articles/$slug")({
 
 function EditArticle() {
   const { article } = Route.useLoaderData();
+  const toast = useRouterState({
+    select: (s) => (s.location.state as { editorToast?: string } | null)?.editorToast,
+  });
 
   if (!article) {
     return (
@@ -34,7 +37,7 @@ function EditArticle() {
   return (
     <main className="min-h-screen bg-background px-5 py-8 md:px-8">
       <div className="mx-auto max-w-5xl">
-        <ArticleEditor article={article} isNew={false} />
+        <ArticleEditor article={article} isNew={false} initialMessage={toast} />
       </div>
     </main>
   );

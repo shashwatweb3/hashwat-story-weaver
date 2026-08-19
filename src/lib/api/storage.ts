@@ -1,4 +1,4 @@
-import type { Article, ArticleInput, StoredArticle } from "../article-types";
+import type { Article, ArticleInput, NewsletterStatus, StoredArticle } from "../article-types";
 import { isValidSlug } from "../slug";
 import { validateInput } from "./io";
 
@@ -9,8 +9,8 @@ type Io = typeof import("./io");
  * Persistent article storage backed by Vercel KV (Upstash Redis REST API).
  * The same store is used locally and in production — one implementation.
  *
- * Layout: one JSON record per article under `articles:{slug}`; the list is
- * derived by scanning the `articles:*` key prefix.
+ * Layout: one JSON record per article under `{ns}:articles:{slug}` (ns = dev
+ * locally, prod on Vercel); the list is derived by scanning the key prefix.
  */
 
 export class StorageError extends Error {
@@ -20,7 +20,41 @@ export class StorageError extends Error {
   }
 }
 
-const KEY = (slug: string): string => `articles:${slug}`;
+const SEND_LOCK_TTL_SECONDS = 300;
+
+/**
+ * Namespace so local development and production never touch each other's
+ * records in the shared store. Vercel sets VERCEL_ENV=production; local runs
+ * default to "dev". Overridable via STORAGE_NAMESPACE.
+ */
+async function namespace(): Promise<string> {
+  const env = (await io()).getServerEnv();
+  return env.STORAGE_NAMESPACE ?? (env.VERCEL_ENV === "production" ? "prod" : "dev");
+}
+
+const KEY = async (slug: string): Promise<string> => `${await namespace()}:articles:${slug}`;
+const SEND_LOCK_KEY = async (slug: string): Promise<string> =>
+  `${await namespace()}:articles:sendlock:${slug}`;
+
+/** Normalizes a raw record, defaulting any legacy/missing fields. */
+function normalizeStored(raw: Partial<StoredArticle>): StoredArticle {
+  return {
+    id: raw.id ?? crypto.randomUUID(),
+    slug: raw.slug ?? "",
+    title: raw.title ?? "",
+    excerpt: raw.excerpt ?? "",
+    category: raw.category ?? "",
+    tags: raw.tags ?? [],
+    coverImage: raw.coverImage,
+    publishedAt: raw.publishedAt ?? "",
+    status: raw.status === "PUBLISHED" ? "PUBLISHED" : "DRAFT",
+    content: raw.content ?? "",
+    createdAt: raw.createdAt ?? new Date().toISOString(),
+    updatedAt: raw.updatedAt ?? new Date().toISOString(),
+    newsletterStatus: raw.newsletterStatus ?? "NOT_SENT",
+    newsletterSentAt: raw.newsletterSentAt ?? null,
+  };
+}
 
 function toArticle(stored: StoredArticle): Article {
   return {
@@ -44,6 +78,8 @@ function toStored(input: ArticleInput, existing?: StoredArticle): StoredArticle 
     content: input.content,
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
+    newsletterStatus: existing?.newsletterStatus ?? "NOT_SENT",
+    newsletterSentAt: existing?.newsletterSentAt ?? null,
   };
 }
 
@@ -71,21 +107,22 @@ async function redis(command: string, ...parts: string[]): Promise<{ result: unk
 }
 
 async function getStored(slug: string): Promise<StoredArticle | null> {
-  const { result } = await redis("get", KEY(slug));
+  const { result } = await redis("get", await KEY(slug));
   if (typeof result !== "string" || !result) return null;
   try {
-    return JSON.parse(result) as StoredArticle;
+    return normalizeStored(JSON.parse(result) as Partial<StoredArticle>);
   } catch {
     return null;
   }
 }
 
 export async function listStoredArticles(): Promise<Article[]> {
-  const { result } = await redis("keys", "articles:*");
+  const { result } = await redis("keys", `${await namespace()}:articles:*`);
   const keys = Array.isArray(result) ? (result as string[]) : [];
   const articles = await Promise.all(
     keys.map(async (key) => {
-      const slug = key.startsWith("articles:") ? key.slice("articles:".length) : "";
+      const prefix = `${await namespace()}:articles:`;
+      const slug = key.startsWith(prefix) ? key.slice(prefix.length) : "";
       if (!slug) return null;
       const stored = await getStored(slug);
       return stored ? toArticle(stored) : null;
@@ -115,13 +152,55 @@ export async function saveStoredArticle(
     if (clash) return { ok: false, error: "That slug is already in use." };
   }
   const record = toStored(input, current ?? undefined);
-  await redis("set", KEY(input.slug), JSON.stringify(record));
+  await redis("set", await KEY(input.slug), JSON.stringify(record));
   if (current && current.slug !== input.slug) {
-    await redis("del", KEY(current.slug));
+    await redis("del", await KEY(current.slug));
   }
   return { ok: true };
 }
 
 export async function deleteStoredArticle(slug: string): Promise<void> {
-  await redis("del", KEY(slug));
+  await redis("del", await KEY(slug));
+}
+
+export async function getNewsletterState(
+  slug: string,
+): Promise<{ status: NewsletterStatus; sentAt: string | null } | null> {
+  const stored = await getStored(slug);
+  if (!stored) return null;
+  return { status: stored.newsletterStatus, sentAt: stored.newsletterSentAt };
+}
+
+export async function setNewsletterState(
+  slug: string,
+  status: NewsletterStatus,
+  sentAt: string | null = null,
+): Promise<void> {
+  const stored = await getStored(slug);
+  if (!stored) return;
+  stored.newsletterStatus = status;
+  stored.newsletterSentAt = sentAt;
+  stored.updatedAt = new Date().toISOString();
+  await redis("set", await KEY(slug), JSON.stringify(stored));
+}
+
+/**
+ * Acquires a short-lived send lock (SETNX) so two concurrent requests can
+ * never both start sending the same article. Returns false if the lock is
+ * already held.
+ */
+export async function acquireSendLock(slug: string): Promise<boolean> {
+  const { result } = await redis(
+    "set",
+    await SEND_LOCK_KEY(slug),
+    "1",
+    "NX",
+    "EX",
+    String(SEND_LOCK_TTL_SECONDS),
+  );
+  return result === "OK";
+}
+
+export async function releaseSendLock(slug: string): Promise<void> {
+  await redis("del", await SEND_LOCK_KEY(slug));
 }

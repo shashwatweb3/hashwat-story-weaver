@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "@tanstack/react-router";
-import { saveArticle, deleteArticle } from "@/lib/api/articles";
-import type { Article, ArticleInput } from "@/lib/article-types";
+import { saveArticle, deleteArticle, sendArticleNewsletter } from "@/lib/api/articles";
+import type { Article, ArticleInput, NewsletterStatus } from "@/lib/article-types";
 import { slugify } from "@/lib/slug";
 import { renderMarkdownClient } from "@/lib/markdown-client";
+import { format } from "date-fns";
 
 const emptyInput: ArticleInput = {
   slug: "",
@@ -23,7 +24,15 @@ const labelCls = "type-label mb-2 block text-muted-foreground";
 const btnCls =
   "type-label cursor-pointer border-2 border-foreground bg-card px-4 py-2.5 transition-transform hover:-translate-y-0.5 hover:shadow-[3px_3px_0_var(--ink)]";
 
-export function ArticleEditor({ article, isNew }: { article: Article | null; isNew: boolean }) {
+export function ArticleEditor({
+  article,
+  isNew,
+  initialMessage = null,
+}: {
+  article: Article | null;
+  isNew: boolean;
+  initialMessage?: string | null;
+}) {
   const router = useRouter();
   const [form, setForm] = useState<ArticleInput>(() =>
     article
@@ -43,8 +52,14 @@ export function ArticleEditor({ article, isNew }: { article: Article | null; isN
   const [tab, setTab] = useState<"edit" | "preview">("edit");
   const [slugTouched, setSlugTouched] = useState(!isNew);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(initialMessage);
   const [error, setError] = useState<string | null>(null);
+  const [confirmingSend, setConfirmingSend] = useState(false);
+  const [sending, setSending] = useState(false);
+
+  const newsletterStatus: NewsletterStatus = article?.newsletterStatus ?? "NOT_SENT";
+  const canSendNewsletter =
+    !isNew && !!article?.published && newsletterStatus !== "SENT" && newsletterStatus !== "SENDING";
 
   const previewHtml = useMemo(() => renderMarkdownClient(form.content), [form.content]);
 
@@ -71,6 +86,22 @@ export function ArticleEditor({ article, isNew }: { article: Article | null; isN
       return;
     }
     setMessage(next.published ? "Published." : "Saved as draft.");
+    setForm((f) => ({
+      ...f,
+      published: next.published,
+      publishedAt: next.publishedAt ? next.publishedAt : f.publishedAt,
+    }));
+    if (!article) {
+      if (next.slug) {
+        router.navigate({
+          to: "/admin/articles/$slug",
+          params: { slug: next.slug },
+          state: { editorToast: next.published ? "Published." : "Saved as draft." },
+        });
+      }
+      return;
+    }
+    router.invalidate();
     if (redirect && next.slug) {
       router.navigate({ to: "/admin/articles/$slug", params: { slug: next.slug } });
     }
@@ -94,6 +125,34 @@ export function ArticleEditor({ article, isNew }: { article: Article | null; isN
     if (!window.confirm(`Delete "${article.title}"? This cannot be undone.`)) return;
     const res = await deleteArticle({ data: { slug: article.slug } });
     if (res.ok) router.navigate({ to: "/admin" });
+  }
+
+  async function confirmSendNewsletter() {
+    if (!article || sending) return;
+    setSending(true);
+    setError(null);
+    const res = await sendArticleNewsletter({ data: { slug: article.slug } });
+    setSending(false);
+    setConfirmingSend(false);
+    if (!res.ok) {
+      setError(res.error ?? "Could not send the newsletter.");
+      return;
+    }
+    setMessage("Newsletter sent to subscribers.");
+    router.invalidate();
+  }
+
+  function statusLabel(status: NewsletterStatus): string {
+    switch (status) {
+      case "SENDING":
+        return "SENDING…";
+      case "SENT":
+        return "SENT";
+      case "FAILED":
+        return "FAILED";
+      default:
+        return "NOT SENT";
+    }
   }
 
   return (
@@ -263,6 +322,37 @@ export function ArticleEditor({ article, isNew }: { article: Article | null; isN
             <p className="type-label text-muted-foreground">
               Status: {form.published ? "PUBLISHED" : "DRAFT"}
             </p>
+            <div className="border-t-2 border-border pt-5">
+              <p className="type-label mb-2 text-muted-foreground">Newsletter</p>
+              <p className="type-label text-foreground">
+                Status:{" "}
+                <span className={newsletterStatus === "FAILED" ? "text-accent" : undefined}>
+                  {statusLabel(newsletterStatus)}
+                </span>
+              </p>
+              {newsletterStatus === "SENT" && article?.newsletterSentAt ? (
+                <p className="type-label mt-1 text-muted-foreground">
+                  Sent: {format(new Date(article.newsletterSentAt), "MMM d, yyyy")}
+                </p>
+              ) : null}
+              <button
+                type="button"
+                onClick={() => setConfirmingSend(true)}
+                disabled={!canSendNewsletter || saving}
+                className="type-label mt-4 cursor-pointer border-2 border-foreground bg-card px-4 py-2.5 transition-transform hover:-translate-y-0.5 hover:shadow-[3px_3px_0_var(--ink)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+              >
+                {newsletterStatus === "SENDING" ? "Sending…" : "Send to subscribers"}
+              </button>
+              <p className="type-label mt-2 text-muted-foreground">
+                {!article?.published
+                  ? "Only published articles can be sent."
+                  : newsletterStatus === "SENT"
+                    ? "Already sent to subscribers."
+                    : newsletterStatus === "FAILED"
+                      ? "Previous send failed — you can try again."
+                      : "Publishing and sending are separate actions."}
+              </p>
+            </div>
           </div>
         </div>
       ) : (
@@ -274,6 +364,50 @@ export function ArticleEditor({ article, isNew }: { article: Article | null; isN
           )}
         </div>
       )}
+
+      {confirmingSend && article ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Send newsletter confirmation"
+          onClick={() => {
+            if (!sending) setConfirmingSend(false);
+          }}
+        >
+          <div
+            className="w-full max-w-md rounded-3xl border-2 border-foreground bg-card p-6 shadow-[8px_8px_0_var(--ink)]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="type-display text-2xl">
+              Send this article to your newsletter subscribers?
+            </h3>
+            <p className="type-label mt-3 text-muted-foreground">Title: {article.title}</p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              This will send the article to your current subscribers. Publishing the article on the
+              website does not happen again — this only emails your list.
+            </p>
+            <div className="mt-6 flex flex-wrap justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setConfirmingSend(false)}
+                disabled={sending}
+                className="type-label cursor-pointer border-2 border-foreground bg-card px-4 py-2.5 transition-transform hover:-translate-y-0.5 hover:shadow-[3px_3px_0_var(--ink)] disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmSendNewsletter}
+                disabled={sending}
+                className="type-label cursor-pointer border-2 border-foreground bg-foreground px-4 py-2.5 text-background transition-transform hover:-translate-y-0.5 hover:shadow-[3px_3px_0_var(--accent)] disabled:opacity-50"
+              >
+                {sending ? "Sending…" : "Send newsletter"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

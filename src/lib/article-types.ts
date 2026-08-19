@@ -1,5 +1,7 @@
 export type ArticleStatus = "DRAFT" | "PUBLISHED";
 
+export type NewsletterStatus = "NOT_SENT" | "SENDING" | "SENT" | "FAILED";
+
 export type Article = {
   id: string;
   slug: string;
@@ -15,6 +17,9 @@ export type Article = {
   content: string;
   createdAt: string;
   updatedAt: string;
+  newsletterStatus: NewsletterStatus;
+  /** ISO timestamp of the successful newsletter send, or null. */
+  newsletterSentAt: string | null;
 };
 
 export type ArticleInput = {

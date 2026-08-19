@@ -4,9 +4,11 @@ import type { Article, ArticleInput } from "../article-types";
 
 type Io = typeof import("./io");
 type Storage = typeof import("./storage");
+type Newsletter = typeof import("./newsletter");
 
 const io = () => import("./io") as Promise<Io>;
 const storage = () => import("./storage") as Promise<Storage>;
+const newsletter = () => import("./newsletter") as Promise<Newsletter>;
 
 function sortArticles(articles: Article[], includeDrafts: boolean): Article[] {
   const visible = articles.filter((a) => includeDrafts || a.published);
@@ -85,4 +87,33 @@ export const deleteArticle = createServerFn({ method: "POST" })
     } catch {
       return { ok: false, error: "Could not delete the article. Please try again later." };
     }
+  });
+
+/** Public: subscribe an email to the newsletter (double opt-in handled by the provider). */
+export const subscribeNewsletter = createServerFn({ method: "POST" }).handler(async ({ data }) => {
+  const { email } = data as { email: string };
+  return (await newsletter()).subscribeToNewsletter(email);
+});
+
+/** Admin: subscriber count (null when the provider is unreachable) + sent article count. */
+export const getNewsletterStats = createServerFn({ method: "GET" })
+  .middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    if (!context.isAdmin) throw new Error("Unauthorized");
+    try {
+      const all = await (await storage()).listStoredArticles();
+      const sentCount = all.filter((a) => a.newsletterStatus === "SENT").length;
+      return { subscribers: await (await newsletter()).getSubscriberCount(), sentCount };
+    } catch {
+      return { subscribers: null, sentCount: 0 };
+    }
+  });
+
+/** Admin: send a published article to newsletter subscribers (explicit action only). */
+export const sendArticleNewsletter = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .handler(async ({ data, context }) => {
+    if (!context.isAdmin) throw new Error("Unauthorized");
+    const { slug } = data as { slug: string };
+    return (await newsletter()).sendArticleNewsletter(slug);
   });

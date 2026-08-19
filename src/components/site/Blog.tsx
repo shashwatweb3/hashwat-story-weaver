@@ -3,6 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { format } from "date-fns";
 import type { Article } from "@/lib/article-types";
+import { NewsletterCta } from "@/components/site/NewsletterCta";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -66,6 +67,10 @@ export function Blog({ articles }: { articles: Article[] }) {
             ))}
           </ul>
         )}
+
+        <div className="mt-10 max-w-md">
+          <NewsletterCta compact />
+        </div>
       </div>
     </section>
   );

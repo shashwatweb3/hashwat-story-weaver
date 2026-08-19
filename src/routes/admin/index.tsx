@@ -1,6 +1,6 @@
 import { createFileRoute, redirect, Link, useRouter } from "@tanstack/react-router";
 import { isAdmin, logout } from "@/lib/api/auth";
-import { listArticles, saveArticle, deleteArticle } from "@/lib/api/articles";
+import { listArticles, saveArticle, deleteArticle, getNewsletterStats } from "@/lib/api/articles";
 import { useState } from "react";
 
 export const Route = createFileRoute("/admin/")({
@@ -9,14 +9,17 @@ export const Route = createFileRoute("/admin/")({
     if (!ok) throw redirect({ to: "/admin/login" });
   },
   loader: async () => {
-    const articles = await listArticles({ data: { includeDrafts: true } });
-    return { articles };
+    const [articles, stats] = await Promise.all([
+      listArticles({ data: { includeDrafts: true } }),
+      getNewsletterStats(),
+    ]);
+    return { articles, stats };
   },
   component: AdminDashboard,
 });
 
 function AdminDashboard() {
-  const { articles } = Route.useLoaderData();
+  const { articles, stats } = Route.useLoaderData();
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -101,6 +104,18 @@ function AdminDashboard() {
         </header>
 
         {error ? <p className="type-label mt-6 text-accent">{error}</p> : null}
+
+        <div className="type-label mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-muted-foreground">
+          <span>
+            Subscribers:{" "}
+            <span className="text-foreground">
+              {stats.subscribers === null ? "—" : stats.subscribers}
+            </span>
+          </span>
+          <span>
+            Articles sent: <span className="text-foreground">{stats.sentCount}</span>
+          </span>
+        </div>
 
         <div className="mt-10 overflow-hidden rounded-3xl border-2 border-foreground bg-card shadow-[6px_6px_0_var(--ink)]">
           {articles.length === 0 ? (
